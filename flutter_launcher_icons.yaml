@@ -1,0 +1,8 @@
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/app_icon.png" # Ruta a tu imagen de ícono
+  min_sdk_android: 21 # SDK mínimo para Android
+  adaptive_icon_background: "#1c1446" # Color de fondo para ícono adaptativo (Android 8.0+)
+  adaptive_icon_foreground: "assets/icon/app_icon.png" # Imagen para ícono adaptativo
+  remove_alpha_ios: true # Elimina canal alfa para iOS

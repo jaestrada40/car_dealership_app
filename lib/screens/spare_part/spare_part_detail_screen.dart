@@ -113,7 +113,7 @@ class _SparePartDetailScreenState extends State<SparePartDetailScreen> {
 
                 // Precio
                 Text(
-                  '\$${part.price}',
+                  '\Q${part.price}',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,

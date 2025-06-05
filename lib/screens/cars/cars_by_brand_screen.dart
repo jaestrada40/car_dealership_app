@@ -149,7 +149,7 @@ class _CarsByBrandScreenState extends State<CarsByBrandScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              '\$${car.price}',
+              '\Q${car.price}',
               style: const TextStyle(
                 color: Colors.green,
                 fontSize: 14,

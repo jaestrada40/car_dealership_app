@@ -1,26 +1,25 @@
 // lib/screens/home_screen.dart
 
+import 'package:car_dealership_app/screens/cars/car_detail_screen.dart';
+import 'package:car_dealership_app/screens/cars/cars_by_brand_screen.dart';
+import 'package:car_dealership_app/screens/cars/cars_screen.dart';
+import 'package:car_dealership_app/screens/spare_part/spare_part_detail_screen.dart';
+import 'package:car_dealership_app/screens/spare_part/spare_parts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:car_dealership_app/screens/brands/brands_screen.dart';
-import 'package:car_dealership_app/screens/cars/cars_screen.dart';
-import 'package:car_dealership_app/screens/spare_part/spare_parts_screen.dart';
 import 'package:car_dealership_app/screens/profile_screen.dart';
-import 'package:car_dealership_app/screens/cars/cars_by_brand_screen.dart';
-import 'package:car_dealership_app/screens/cars/car_detail_screen.dart';
-import 'package:car_dealership_app/screens/spare_part/spare_part_detail_screen.dart';
-
+import 'package:car_dealership_app/screens/cars/search_results_screen.dart'; // <-- importamos la pantalla de resultados
 import 'package:car_dealership_app/models/user_model.dart';
 import 'package:car_dealership_app/models/brand_model.dart';
 import 'package:car_dealership_app/models/car_model.dart';
 import 'package:car_dealership_app/models/spare_part_model.dart';
-
 import 'package:car_dealership_app/services/users/user_service.dart';
 import 'package:car_dealership_app/services/brands/brand_service.dart';
 import 'package:car_dealership_app/services/cars/car_service.dart';
 import 'package:car_dealership_app/services/spare_parts/spare_part_service.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -39,6 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int _selectedIndex = 0;
 
+  // 1) Creamos un TextEditingController para el campo de búsqueda:
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +48,12 @@ class _HomeScreenState extends State<HomeScreen> {
     _brandsFuture = _brandService.getBrands();
     _carsFuture = _carService.getCars();
     _partsFuture = _partService.getSpareParts();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadUser() async {
@@ -57,9 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-
-    // Si entramos en “Perfil” (3) o volvemos a “Inicio” (0), recargar usuario
-    if (index == 3 || index == 0) {
+    // Si entramos en “Perfil” (2) o volvemos a “Inicio” (0), recargar usuario
+    if (index == 2 || index == 0) {
       await _loadUser();
     }
   }
@@ -71,11 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final avatarUrl =
         _user?.image != null ? 'http://10.0.2.2${_user!.image}' : null;
 
+    // Ahora sólo hay 3 páginas: Inicio, Marcas y Profile
     final List<Widget> _pages = [
-      _buildHomeContent(greeting, name, avatarUrl),
-      const BrandsScreen(),
-      const CarsScreen(),
-      const ProfileScreen(),
+      _buildHomeContent(greeting, name, avatarUrl), // índice 0
+      const BrandsScreen(), // índice 1
+      const ProfileScreen(), // índice 2
     ];
 
     return Scaffold(
@@ -100,10 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.directions_car),
             label: 'Marcas',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Ordenes',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -152,48 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
-              // Carrito con badge "0"
-              Stack(
-                alignment: Alignment.topRight,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      // TODO: acción de carrito
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.shopping_cart,
-                          color: Colors.white, size: 24),
-                    ),
-                  ),
-                  Positioned(
-                    right: 4,
-                    top: 4,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        '0',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              // Ícono de carrito eliminado
             ],
           ),
         ),
@@ -224,20 +186,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Expanded(
+                        // Ahora enlazamos el TextField a nuestro controlador:
+                        Expanded(
                           child: TextField(
-                            decoration: InputDecoration(
+                            controller: _searchController,
+                            decoration: const InputDecoration(
                               hintText: 'Buscar vehículo..',
                               border: InputBorder.none,
                               isDense: true,
                               contentPadding: EdgeInsets.zero,
                             ),
+                            onSubmitted: (val) => _performSearch(),
                           ),
                         ),
                         InkWell(
-                          onTap: () {
-                            // TODO: acción de búsqueda
-                          },
+                          onTap: _performSearch,
                           child: Container(
                             decoration: const BoxDecoration(
                               color: Color(0xFF1F1147),
@@ -375,7 +338,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (ctx, i) {
                           final b = brands[i];
                           final imgUrl = 'http://10.0.2.2${b.image}';
-                          final countText = '+${i * 3 + 5}';
 
                           return Padding(
                             padding: EdgeInsets.only(
@@ -432,13 +394,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    const SizedBox(height: 2),
-                                    // Text(
-                                    //   countText,
-                                    //   style: TextStyle(
-                                    //       color: Colors.grey[600],
-                                    //       fontSize: 11),
-                                    // ),
                                   ],
                                 ),
                               ),
@@ -546,7 +501,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 8),
 
-                // Lista horizontal de autos (mismo diseño que en CarsScreen)
+                // Lista horizontal de autos
                 SizedBox(
                   height: 280,
                   child: FutureBuilder<List<Car>>(
@@ -558,11 +513,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Color(0xFF1F1147)));
                       }
                       if (snap.hasError) {
-                        return const Center(
+                        return Center(
                           child: Text(
                             'No se pudieron cargar los autos',
-                            style: TextStyle(
-                                color: Color.fromARGB(255, 255, 255, 255)),
+                            style: TextStyle(color: Colors.red.shade300),
                           ),
                         );
                       }
@@ -620,7 +574,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 const SizedBox(height: 8),
 
-                // Lista horizontal de repuestos (mismo diseño que en SparePartsScreen)
+                // Lista horizontal de repuestos
                 SizedBox(
                   height: 270,
                   child: FutureBuilder<List<SparePart>>(
@@ -632,8 +586,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Color(0xFF1F1147)));
                       }
                       if (snap.hasError) {
-                        print(
-                            'Error al cargar repuestos en HomeScreen: ${snap.error}');
                         return Center(
                           child: Text(
                             'No se pudieron cargar los repuestos',
@@ -664,6 +616,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  // 2) Este método se llama cuando el usuario toca la flecha o presiona "Enter" en el teclado
+  void _performSearch() {
+    final query = _searchController.text.trim();
+    if (query.isEmpty) {
+      return; // no hacemos nada si está vacío
+    }
+    // Navegamos a la pantalla de resultados, pasándole la query
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SearchResultsScreen(query: query),
+      ),
     );
   }
 

@@ -108,17 +108,19 @@ class _AppointmentsAdminScreenState extends State<AppointmentsAdminScreen> {
   }
 
   Widget _buildAppointmentTile(Map<String, dynamic> a) {
-    final int id = a['id'] as int;
-    final String brand = a['brand_name'] as String;
-    final String model = a['model'] as String;
+    // Convertimos manualmente cada campo numérico usando int.parse(...)
+    final int id = int.parse(a['id'].toString());
+    final String brand = a['brand_name'].toString();
+    final String model = a['model'].toString();
     final String year = a['year'].toString();
-    final String? imgUrl = a['image_url'] as String?;
-    final String fullName = a['full_name'] as String;
-    final String dateStr = a['date'] as String;
-    final String timeStr = a['time'] as String;
-    final String status = a['status'] as String;
+    final String? imgUrl =
+        a['image_url'] != null ? a['image_url'].toString() : null;
+    final String fullName = a['full_name'].toString();
+    final String dateStr = a['date'].toString();
+    final String timeStr = a['time'].toString();
+    final String status = a['status'].toString();
 
-    // Formatear fecha
+    // Formatear fecha (si falla, dejamos dateStr tal cual)
     String formattedDate = dateStr;
     try {
       final dt = DateTime.parse(dateStr);
@@ -151,8 +153,10 @@ class _AppointmentsAdminScreenState extends State<AppointmentsAdminScreen> {
           Text('Cliente: $fullName',
               style: const TextStyle(fontSize: 14, color: Colors.grey)),
           const SizedBox(height: 2),
-          Text('Fecha: $formattedDate  •  Hora: ${timeStr.substring(0, 5)}',
-              style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          Text(
+            'Fecha: $formattedDate  •  Hora: ${timeStr.substring(0, 5)}',
+            style: const TextStyle(fontSize: 13, color: Colors.grey),
+          ),
           const SizedBox(height: 2),
           Row(
             children: [

@@ -140,7 +140,7 @@ class _CarsScreenState extends State<CarsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              '\$${c.price}',
+              '\Q${c.price}',
               style: const TextStyle(
                 color: Colors.green,
                 fontSize: 14,

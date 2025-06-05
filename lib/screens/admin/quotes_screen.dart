@@ -1,6 +1,7 @@
 // lib/screens/admin/quotes_screen.dart
 
 import 'package:car_dealership_app/screens/admin/admin_quote_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -36,8 +37,10 @@ class _AdminQuotesScreenState extends State<AdminQuotesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Administrar Cotizaciones',
-            style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Administrar Cotizaciones',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: const Color(0xFF1F1147),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
@@ -55,9 +58,13 @@ class _AdminQuotesScreenState extends State<AdminQuotesScreen> {
           }
           if (snapshot.hasError) {
             return Center(
-              child: Text(
-                'Error al cargar cotizaciones',
-                style: TextStyle(color: Colors.red.shade300),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Text(
+                  'Error al cargar cotizaciones:\n${snapshot.error}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.red.shade300),
+                ),
               ),
             );
           }
@@ -69,8 +76,11 @@ class _AdminQuotesScreenState extends State<AdminQuotesScreen> {
               child: ListView(
                 children: [
                   const SizedBox(height: 100),
-                  Icon(Icons.request_quote,
-                      size: 64, color: Colors.grey.shade400),
+                  Icon(
+                    Icons.request_quote,
+                    size: 64,
+                    color: Colors.grey.shade400,
+                  ),
                   const SizedBox(height: 16),
                   const Center(
                     child: Text(
@@ -144,19 +154,27 @@ class _AdminQuotesScreenState extends State<AdminQuotesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 4),
-          Text('Cliente: $fullName',
-              style: const TextStyle(fontSize: 14, color: Colors.grey)),
+          Text(
+            'Cliente: $fullName',
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
+          ),
           const SizedBox(height: 2),
-          Text('Cantidad: $quantity',
-              style: const TextStyle(fontSize: 13, color: Colors.grey)),
+          Text(
+            'Cantidad: $quantity',
+            style: const TextStyle(fontSize: 13, color: Colors.grey),
+          ),
           const SizedBox(height: 2),
-          Text('Fecha: $formattedDate',
-              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(
+            'Fecha: $formattedDate',
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
           const SizedBox(height: 2),
           Row(
             children: [
-              const Text('Estado: ',
-                  style: TextStyle(fontSize: 12, color: Colors.grey)),
+              const Text(
+                'Estado: ',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
               _statusDropdown(id, status),
             ],
           ),
@@ -171,16 +189,27 @@ class _AdminQuotesScreenState extends State<AdminQuotesScreen> {
 
   /// Widget que muestra un DropdownButton para cambiar el status de una cotización.
   Widget _statusDropdown(int quoteId, String currentStatus) {
+    // Estados “oficiales” permitidos
     const List<String> allStatuses = ['pendiente', 'aprobada', 'rechazada'];
 
+    // Si el currentStatus que viene del backend NO está en allStatuses,
+    // lo agregamos primero para que aparezca como ítem seleccionado:
+    final List<String> dropdownItems = [
+      if (!allStatuses.contains(currentStatus)) currentStatus,
+      ...allStatuses,
+    ];
+
     return DropdownButton<String>(
-      value: currentStatus,
+      value: dropdownItems.contains(currentStatus)
+          ? currentStatus
+          : dropdownItems.first,
       icon: const Icon(Icons.arrow_drop_down, color: Color(0xFF1F1147)),
       underline: const SizedBox(),
-      items: allStatuses.map((String s) {
+      items: dropdownItems.map((String s) {
         return DropdownMenuItem<String>(
           value: s,
           child: Text(
+            // Capitalizar la primera letra
             s[0].toUpperCase() + s.substring(1),
             style: const TextStyle(fontSize: 13, color: Color(0xFF1F1147)),
           ),
@@ -233,8 +262,10 @@ class _AdminQuotesScreenState extends State<AdminQuotesScreen> {
               Navigator.of(ctx).pop();
               _deleteQuote(quoteId);
             },
-            child: const Text('Eliminar',
-                style: TextStyle(color: Colors.redAccent)),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Colors.redAccent),
+            ),
           ),
         ],
       ),

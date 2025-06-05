@@ -104,7 +104,7 @@ class _CarDetailScreenState extends State<CarDetailScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '\$${car.price}',
+                  '\Q${car.price}',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,

@@ -154,7 +154,7 @@ class _SparePartsScreenState extends State<SparePartsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Text(
-              '\$${p.price}',
+              '\Q${p.price}',
               style: const TextStyle(
                 color: Colors.green,
                 fontSize: 14,

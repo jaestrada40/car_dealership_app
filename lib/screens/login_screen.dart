@@ -186,20 +186,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 16),
 
-                  // Enlace "¿Olvidaste tu contraseña?"
-                  TextButton(
-                    onPressed: () {
-                      // TODO: Navegar a pantalla de recuperación
-                    },
-                    child: const Text(
-                      '¿Olvidaste tu contraseña?',
-                      style: TextStyle(
-                        color: Color(0xFF1F1147),
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                  ),
+                  // // Enlace "¿Olvidaste tu contraseña?"
+                  // TextButton(
+                  //   onPressed: () {
+                  //     // TODO: Navegar a pantalla de recuperación
+                  //   },
+                  //   child: const Text(
+                  //     '¿Olvidaste tu contraseña?',
+                  //     style: TextStyle(
+                  //       color: Color(0xFF1F1147),
+                  //       fontSize: 14,
+                  //       decoration: TextDecoration.underline,
+                  //     ),
+                  //   ),
+                  // ),
 
                   const SizedBox(height: 8),
 
